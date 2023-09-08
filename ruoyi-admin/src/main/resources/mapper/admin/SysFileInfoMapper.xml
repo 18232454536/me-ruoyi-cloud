@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.admin.mapper.SysFileInfoMapper">
+
+    <resultMap type="com.ruoyi.admin.domain.SysFileInfo" id="SysFileInfoResult">
+        <result property="fileId"    column="file_id"    />
+        <result property="fileName"    column="file_name"    />
+        <result property="filePath"    column="file_path"    />
+    </resultMap>
+
+    <sql id="selectSysFileInfoVo">
+        select file_id, file_name, file_path from sys_file_info
+    </sql>
+
+    <select id="selectSysFileInfoList" parameterType="com.ruoyi.admin.domain.SysFileInfo" resultMap="SysFileInfoResult">
+        <include refid="selectSysFileInfoVo"/>
+        <where>
+            <if test="fileName != null  and fileName != ''"> and file_name like concat('%', #{fileName}, '%')</if>
+            <if test="filePath != null  and filePath != ''"> and file_path = #{filePath}</if>
+        </where>
+    </select>
+
+    <select id="selectSysFileInfoByFileid" parameterType="Long" resultMap="SysFileInfoResult">
+        <include refid="selectSysFileInfoVo"/>
+        where file_id = #{fileId}
+    </select>
+
+    <insert id="insertSysFileInfo" parameterType="com.ruoyi.admin.domain.SysFileInfo">
+        insert into sys_file_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="fileId != null">file_id,</if>
+            <if test="fileName != null">file_name,</if>
+            <if test="filePath != null">file_path,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="fileId != null">#{fileId},</if>
+            <if test="fileName != null">#{fileName},</if>
+            <if test="filePath != null">#{filePath},</if>
+        </trim>
+    </insert>
+
+    <update id="updateSysFileInfo" parameterType="com.ruoyi.admin.domain.SysFileInfo">
+        update sys_file_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="fileName != null">file_name = #{fileName},</if>
+            <if test="filePath != null">file_path = #{filePath},</if>
+        </trim>
+        where file_id = #{fileId}
+    </update>
+
+    <delete id="deleteSysFileInfoByFileid" parameterType="Long">
+        delete from sys_file_info where file_id = #{fileId}
+    </delete>
+
+    <delete id="deleteSysFileInfoByFileids" parameterType="String">
+        delete from sys_file_info where file_id in
+        <foreach item="fileId" collection="array" open="(" separator="," close=")">
+            #{fileId}
+        </foreach>
+    </delete>
+</mapper>
